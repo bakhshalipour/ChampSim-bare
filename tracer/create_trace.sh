@@ -5,16 +5,19 @@ if [[ "$#" -ne 4 ]]; then
     exit 1
 fi
 
-PIN_BINARY=../pin-3.2-81205-gcc-linux/pin
+if ! [[ -f pin ]]; then
+    if ! [[ -f ../pin-3.2-81205-gcc-linux/pin ]]; then
+        echo "Couldn't find PIN binary!"
+        exit 1
+    fi
 
-PROGRAM_BINARY=${1?Program to be instrumented missed!}
-OUTPUT_NAME=${2?Output name missed!}
-SKIP_INSTRS=${3?Skip instructions misses!}
-INSTRUMENT_INSTRS=${4?Number of instructions to be instrumented missed!}
-
-if ! [[ -f $PIN_BINARY ]]; then
-    echo "Couldn't find pin binary!"
-    exit 1
+    ln -s ../pin-3.2-81205-gcc-linux/pin pin
 fi
 
-./$PIN_BINARY -injection child -ifeellucky -t obj-intel64/champsim_tracer.so -o $OUTPUT_NAME -s $SKIP_INSTRS -t $INSTRUMENT_INSTRS -- $PROGRAM_BINARY
+PROGRAM_BINARY=$1
+PROGRAM_BINARY=$(readlink -f $PROGRAM_BINARY)
+OUTPUT_NAME=$2
+SKIP_INSTRS=$3
+INSTRUMENT_INSTRS=$4
+
+./pin -injection child -ifeellucky -t obj-intel64/champsim_tracer.so -o $OUTPUT_NAME -s $SKIP_INSTRS -t $INSTRUMENT_INSTRS -- $PROGRAM_BINARY
