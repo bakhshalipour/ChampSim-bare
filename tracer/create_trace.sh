@@ -21,3 +21,4 @@ SKIP_INSTRS=$3
 INSTRUMENT_INSTRS=$4
 
 ./pin -injection child -ifeellucky -t obj-intel64/champsim_tracer.so -o $OUTPUT_NAME -s $SKIP_INSTRS -t $INSTRUMENT_INSTRS -- $PROGRAM_BINARY
+
